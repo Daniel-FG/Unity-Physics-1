@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class PhysicsEngine : MonoBehaviour
 {
-    public float mass = 1f;  //質量
-    public Vector3 netForceVector;  //淨力
-    public Vector3 velocityVector;  //每一個FixedUpdate的平均速度
+    public float mass = 1f;  //質量 [kg]
+    public Vector3 velocityVector;  //每一個FixedUpdate的平均速度 [m/s]
+    public Vector3 netForceVector;  //淨力 [kg*m/s^2]
     public bool showTrails = true;  //呈現
 
     private List<Vector3> forceVectorList = new List<Vector3>();
@@ -21,7 +21,7 @@ public class PhysicsEngine : MonoBehaviour
         lineRenderer.SetWidth(0.2F, 0.2F);
         lineRenderer.useWorldSpace = false;
 
-        AddForce forceAdded = GetComponent<AddForce>();
+        RocketEngine forceAdded = GetComponent<RocketEngine>();
     }
     void FixedUpdate ()
     {
