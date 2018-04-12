@@ -12,6 +12,8 @@ public class PhysicsEngine : MonoBehaviour
     private List<Vector3> forceVectorList = new List<Vector3>();
     private LineRenderer lineRenderer;
     private int numberOfForces;
+    private PhysicsEngine[] physicsEngineArray;
+    private const float gravityConstant = 6.673e-11f;
 
     void Start ()
     {
@@ -22,6 +24,7 @@ public class PhysicsEngine : MonoBehaviour
         lineRenderer.useWorldSpace = false;
 
         RocketEngine forceAdded = GetComponent<RocketEngine>();
+        physicsEngineArray = FindObjectsOfType<PhysicsEngine>();
     }
     void FixedUpdate ()
     {
@@ -31,6 +34,7 @@ public class PhysicsEngine : MonoBehaviour
         RenderTrails();
         SumForce();
         UpdatePosition();
+        CalculateGravity();
     }
     public void AddForce(Vector3 force)
     {
@@ -70,6 +74,25 @@ public class PhysicsEngine : MonoBehaviour
         else
         {
             lineRenderer.enabled = false;
+        }
+    }
+    void CalculateGravity()
+    {
+        foreach(PhysicsEngine physicsEngineA in physicsEngineArray)
+        {
+            foreach(PhysicsEngine physicsEngineB in physicsEngineArray)
+            {
+                if(physicsEngineA != physicsEngineB)
+                {
+                    Debug.Log("Calculating force exerted on " + physicsEngineA.name + " due to the gravity of " + physicsEngineB.name);
+
+                    Vector3 distanceVector = physicsEngineA.transform.position - physicsEngineB.transform.position;
+                    float rSquared = Mathf.Pow(distanceVector.magnitude, 2f);
+                    float gravitationalForce = gravityConstant * physicsEngineA.mass * physicsEngineB.mass / rSquared;
+                    Vector3 gravityFeltVector = gravitationalForce * distanceVector.normalized;
+                    physicsEngineA.AddForce(-gravityFeltVector);
+                }
+            }
         }
     }
 }
